@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TodoList from './TodoList';
 import Form from './Form'
+import axios from 'axios'
 
 class App extends Component {
 
@@ -11,6 +12,14 @@ class App extends Component {
       todos: todos,
       countTodo: todos.length + 1,
     }
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:9800/todos', {}).then((response) => {
+      this.setState({todos: response.data.message})
+    }).catch((response) => {
+      console.log(response)
+    })
   }
 
   handleSubmit(e) {
