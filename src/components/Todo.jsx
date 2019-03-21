@@ -10,7 +10,7 @@ class Todo extends Component {
         <span>{this.props.id}</span>
         <span>：{this.props.title}　　</span>
         <a href="">{link}</a>
-        <p>{this.props.desc}</p>
+        <p>{this.props.text}</p>
       </li>
     );
   }
