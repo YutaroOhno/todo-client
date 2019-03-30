@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TodoList from './TodoList';
 import Form from './Form'
 import axios from 'axios'
+import qs from 'qs';
 
 class App extends Component {
 
@@ -15,6 +16,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // ハードコーディングはやめる
     axios.get('http://localhost:9800/todos', {}).then((response) => {
       this.setState({todos: response.data.message})
     }).catch((response) => {
@@ -24,23 +26,20 @@ class App extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const title = e.target.title.value;
-    const text = e.target.text.value;
-    const todos = this.state.todos.slice()
-    const countTodo = this.state.countTodo
+    // axiosでpostの場合、サーバーサイド側で何故かoptionsで受け取ってしまうので、以下の記述で解消する。
+    const params = new URLSearchParams();
+    params.append('title', e.target.title.value);
+    params.append('text', e.target.text.value);
 
-    todos.push({
-      id: countTodo,
-      title: title,
-      text: text,
-      done: false,
+    // ハードコーディングはやめる
+    axios.post('http://localhost:9800/todos',params,)
+      .then(response =>{
+        const todos = Object.assign([], this.state.todos);
+        todos.push(response.data);
+        this.setState({ todos });
+      }).catch(error => {
+        console.log(error);
     });
-
-    this.setState({ todos })
-    this.setState({ countTodo: countTodo + 1 })
-
-    e.target.title.value = '';
-    e.target.text.value = '';
   }
 
     render() {
