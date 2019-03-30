@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import TodoList from './TodoList';
 import Form from './Form'
 import axios from 'axios'
-import qs from 'qs';
 
 class App extends Component {
 
@@ -11,14 +10,13 @@ class App extends Component {
     const todos = []
     this.state = {
       todos: todos,
-      countTodo: todos.length + 1,
     }
   }
 
   componentDidMount() {
     // ハードコーディングはやめる
     axios.get('http://localhost:9800/todos', {}).then((response) => {
-      this.setState({todos: response.data.message})
+      this.setState({todos: response.data.todos})
     }).catch((response) => {
       console.log(response)
     })
@@ -26,13 +24,14 @@ class App extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    // axiosでpostの場合、サーバーサイド側で何故かoptionsで受け取ってしまうので、以下の記述で解消する。
+    // axiosでpostの場合、サーバーサイド側にoptionsで１度送られるので、以下の記述で解消する。
     const params = new URLSearchParams();
     params.append('title', e.target.title.value);
     params.append('text', e.target.text.value);
 
     // ハードコーディングはやめる
-    axios.post('http://localhost:9800/todos',params,)
+    // axios.post('http://localhost:9800/todos',params,)
+    axios.post('http://localhost:9800/todos',params)
       .then(response =>{
         const todos = Object.assign([], this.state.todos);
         todos.push(response.data);
@@ -42,17 +41,17 @@ class App extends Component {
     });
   }
 
-    render() {
-        return (
-            <div>
-                <h2>Todo</h2>
-                <Form handleSubmit={this.handleSubmit.bind(this)} />
-                <TodoList
-                    todos={this.state.todos}
-                />
-            </div>
-        )
-    }
+  render() {
+    return (
+        <div>
+            <h2>Todo</h2>
+            <Form handleSubmit={this.handleSubmit.bind(this)} />
+            <TodoList
+                todos={this.state.todos}
+            />
+        </div>
+    )
+  }
 }
 
 export default App;

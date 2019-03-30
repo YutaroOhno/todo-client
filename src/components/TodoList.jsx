@@ -1,22 +1,34 @@
 import React, { Component } from 'react';
 import Todo from './Todo';
+import axios from 'axios'
 
 class TodoList extends Component {
 
-    render() {
-        const todos = this.props.todos.map( todo =>
-            <Todo
-              key={todo.id}
-              {...todo}
-            />
-          )
+  handleDelete(e, id) {
+    e.preventDefault();
+    axios.delete(`http://localhost:9800/todos/${id}`)
+      .then(response =>{
+        console.log(response);
+      }).catch(error => {
+        console.log(error);
+    });
+  }
 
-          return(
-            <ul>
-                 {todos}
-            </ul>
-        )
-    }
+  render() {
+      const todos = this.props.todos.map( todo =>
+        <Todo
+          handleDelete={this.handleDelete.bind(this)}
+          key={todo.id}
+          {...todo}
+        />
+      )
+
+      return(
+        <ul>
+          {todos}
+        </ul>
+      )
+  }
 }
 
 export default TodoList
